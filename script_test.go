@@ -266,7 +266,7 @@ func TestEachLine_FiltersInputThroughSuppliedFunction(t *testing.T) {
 	want := "Hello world\nGoodbye world\n"
 	got, err := script.Echo("Hello\nGoodbye").
 		EachLine(func(line string, out *strings.Builder) {
-			out.WriteString(line + " world\n")
+			fmt.Fprintln(out, line, "world")
 		}).String()
 	if err != nil {
 		t.Fatal(err)
@@ -698,7 +698,7 @@ func TestGetUsesPipeContentsAsRequestBody(t *testing.T) {
 			t.Fatal("reading request body", err)
 		}
 		if !cmp.Equal(want, got) {
-			t.Fatalf(cmp.Diff(want, string(got)))
+			t.Fatalf("%s", cmp.Diff(want, string(got)))
 		}
 	}))
 	defer ts.Close()
@@ -2250,7 +2250,7 @@ func ExamplePipe_Bytes() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(data)
+	fmt.Printf("%v\n", data)
 	// Output:
 	// [104 101 108 108 111]
 }
@@ -2321,7 +2321,7 @@ func ExamplePipe_Do() {
 
 func ExamplePipe_EachLine() {
 	script.File("testdata/test.txt").EachLine(func(line string, out *strings.Builder) {
-		out.WriteString("> " + line + "\n")
+		fmt.Fprintln(out, ">", line)
 	}).Stdout()
 	// Output:
 	// > This is the first line in the file.
